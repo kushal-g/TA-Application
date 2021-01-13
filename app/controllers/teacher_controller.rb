@@ -2,7 +2,7 @@ class TeacherController < ApplicationController
   def login
     email = params[:email]
     password = params[:password]
-
+    puts params
     teacher = Teacher.where(email: email).first
     if teacher == nil
       render json:{msg:"TEACHER NOT FOUND"}
@@ -21,9 +21,14 @@ class TeacherController < ApplicationController
     password = params[:password]
 
     puts params
-    newTeacher = Teacher.new(name: name, email: email, password: password)
-    newTeacher.save()
+    teacher = Teacher.where(email: email).first
+    if teacher == nil
+      newTeacher = Teacher.new(name: name, email: email, password: password)
+      newTeacher.save()
 
-    render json: {status:"OK"}, status: :ok
+      render json: newTeacher, status: :ok
+    elsif
+      render json:{msg:"USER ALREADY EXISTS"}, status: :ok
+    end
   end
 end
