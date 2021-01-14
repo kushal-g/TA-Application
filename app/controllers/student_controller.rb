@@ -51,8 +51,11 @@ class StudentController < ApplicationController
         commentStudent = Student.find(comment[:student_id])
         comment.attributes.merge!(:name=>commentStudent[:name], :email=>commentStudent[:email])
       end
-      doubt.attributes.merge!(:email=>student[:email],:name=>student[:name],:comments=>comments)
-      
+      if doubt[:resolved_at]
+        finalHistory =History.where({doubt_id:doubt[:id]}).order('created_at DESC').first
+        teacher = Teacher.find(finalHistory[:teacher_id])
+      end
+      doubt.attributes.merge!(:email=>student[:email],:name=>student[:name],:comments=>comments,:resolver=>teacher)
     end
     render json: doubts, status: :ok
   end
