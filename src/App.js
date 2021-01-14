@@ -3,8 +3,10 @@ import Home from "./pages/Home/Home";
 import StudentHome from "./pages/Student/StudentHome/StudentHome";
 import StudentLogin from "./pages/Student/StudentLogin/StudentLogin";
 import StudentSignup from "./pages/Student/StudentSignup.jsx/StudentSignup";
+import TeacherHome from "./pages/Teacher/TeacherHome/TeacherHome";
 import TeacherLogin from "./pages/Teacher/TeacherLogin/TeacherLogin";
 import TeacherSignup from "./pages/Teacher/TeacherSignup/TeacherSignup";
+import TeacherSolve from "./pages/Teacher/TeacherSolve/TeacherSolve";
 function App() {
   return (
     <div className="App">
@@ -15,6 +17,8 @@ function App() {
         <Route exact path="/student" component={StudentLogin} />
         <Route exact path="/student/signup" component={StudentSignup} />
         <Route exact path="/student/doubts" component={StudentHome} />
+        <Route exact path="/teacher/doubts" component={TeacherHome} />
+        <Route exact path="/teacher/solve/:doubt_id" component={TeacherSolve} />
       </Router>
     </div>
   );

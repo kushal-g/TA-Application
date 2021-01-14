@@ -1,12 +1,12 @@
 import base64 from "base-64";
 import cookie from "react-cookies";
 
-function getStudentId() {
+function getTeacherId() {
   try {
     const userInfo = JSON.parse(
       base64.decode(cookie.load("coding-ninjas-demo"))
     );
-    if (userInfo["account_type"] !== "Student") {
+    if (userInfo["account_type"] !== "Teacher") {
       return false;
     }
     return userInfo.id;
@@ -15,4 +15,4 @@ function getStudentId() {
   }
 }
 
-export default getStudentId;
+export default getTeacherId;

@@ -57,6 +57,18 @@ function DoubtsList() {
             Asked by: {doubt.name} on{" "}
             {new Date(doubt.created_at).toLocaleString()}
           </div>
+          {doubt.answer && (
+            <>
+              <div style={{ fontSize: "15px" }} className="body">
+                Answer: <br />
+                {doubt.answer}
+              </div>
+              <div style={{ fontSize: "13px" }} className="body">
+                Answered by: {doubt.resolver.name} on{" "}
+                {new Date(doubt.resolved_at).toLocaleString()}
+              </div>
+            </>
+          )}
           <div className="separator"></div>
           <CommentBox doubt={doubt} refreshData={fetchDoubts} />
         </Box>
