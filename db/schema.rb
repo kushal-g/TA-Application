@@ -10,7 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_13_191315) do
+ActiveRecord::Schema.define(version: 2021_01_14_081241) do
+
+  create_table "comments", force: :cascade do |t|
+    t.integer "doubt_id"
+    t.text "body"
+    t.integer "student_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "doubts", force: :cascade do |t|
+    t.string "title"
+    t.text "body"
+    t.integer "student_id"
+    t.datetime "resolved_at"
+    t.text "answer"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "histories", force: :cascade do |t|
+    t.integer "doubt_id"
+    t.integer "teacher_id"
+    t.boolean "escalated"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "students", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "teachers", force: :cascade do |t|
     t.string "name"
