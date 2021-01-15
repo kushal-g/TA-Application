@@ -1,0 +1,37 @@
+.TeacherSolve {
+  padding: 20px;
+}
+
+.TeacherSolve > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.TeacherSolve > div > div > button {
+  background-color: white;
+  color: var(--purple);
+  border: 1px solid var(--purple);
+  padding: 5px 20px;
+}
+.TeacherSolve .DoubtCard {
+  position: unset;
+  transform: unset;
+  width: 40vw;
+  align-items: flex-start;
+}
+
+.TeacherSolve .DoubtCard textarea {
+  width: calc(40vw - 20px);
+  margin: 10px 0;
+}
+
+.TeacherSolve .DoubtCard button {
+  background-color: var(--purple);
+  color: white;
+  border: none;
+  font-size: 15px;
+  border-radius: 5px;
+  padding: 8px 20px;
+  align-self: flex-end;
+}
