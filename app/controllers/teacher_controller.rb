@@ -99,4 +99,90 @@ class TeacherController < ApplicationController
     finalHistory.save
     render json: finalHistory, status: :ok
   end
+
+  def stats
+    ################### OVERALL STATS ###############################
+    doubts = Doubt.all
+    totalDoubts = doubts.length
+    totalDoubtsResolved = 0
+    totalTime = 0
+    doubts.each() do |doubt|
+      if doubt[:resolved_at]
+        totalDoubtsResolved+=1
+        totalTime+=(doubt[:resolved_at] - doubt[:created_at])
+      end
+    end
+
+    avgResolutionTime = totalTime / totalDoubtsResolved
+
+    totalEscalated = 0
+    sql = "select doubt_id, max(escalated) as isEscalated from histories group by doubt_id"
+    escalatedArray = ActiveRecord::Base.connection.execute(sql)
+    puts escalatedArray
+    escalatedArray.each() do |doubt|
+      if doubt["isEscalated"] == 1
+        totalEscalated+=1
+      end
+
+    end
+
+    ################# TEACHER STATS ###############################
+
+    teachers = Teacher.all
+    
+    #Doubts asked
+    sql = "select teacher_id,count(distinct doubt_id) as totalAccepted from histories group by teacher_id"
+    doubtsAcceptedArray = ActiveRecord::Base.connection.execute(sql)
+    puts doubtsAcceptedArray
+    doubtsAcceptedHash = {}
+
+    doubtsAcceptedArray.each do |entry|
+      doubtsAcceptedHash[entry["teacher_id"]] = entry["totalAccepted"]
+    end
+
+    puts doubtsAcceptedHash
+
+    
+    #Doubts resolved
+    resolvedDoubtsArray = Doubt.where.not('doubts.resolved_at'=>nil)
+    resolvedDoubtsHash = {}
+    resolvedDoubtsArray.each do |doubt|
+     finalHistory = History.where({doubt_id: doubt[:id]}).order('created_at DESC').first
+      puts resolvedDoubtsHash
+     if resolvedDoubtsHash.key?(finalHistory[:teacher_id])
+      resolvedDoubtsHash[finalHistory[:teacher_id]][:numResolved]+=1
+      resolvedDoubtsHash[finalHistory[:teacher_id]][:totalTime]+=(doubt[:resolved_at] - doubt[:created_at])
+    else
+      resolvedDoubtsHash[finalHistory[:teacher_id]]={"numResolved":1, "totalTime":(doubt[:resolved_at] - doubt[:created_at])}
+     end
+
+    end
+    puts resolvedDoubtsHash
+
+    #Doubts Escalated
+
+    teachers = teachers.map do |teacher|
+      doubtsAccepted = 0
+      resolvedDoubts = 0
+      doubtsEscalated = 0
+
+      
+      sql = "select sum(escalated) as escalated from (select doubt_id, max(escalated) as escalated from (select * from histories where teacher_id=#{teacher[:id]}) r group by r.doubt_id)"
+      doubtsEscalated = ActiveRecord::Base.connection.execute(sql)
+      doubtsEscalated = doubtsEscalated[0]["escalated"] == nil ? 0 : doubtsEscalated[0]["escalated"] 
+
+      if doubtsAcceptedHash.key?(teacher[:id])
+        doubtsAccepted = doubtsAcceptedHash[teacher[:id]]
+      end
+
+      if resolvedDoubtsHash.key?(teacher[:id])
+        resolvedDoubts = resolvedDoubtsHash[teacher[:id]]
+      end
+      
+
+      teacher.attributes.merge!(:doubtsAccepted=>doubtsAccepted,:resolvedDoubts=>resolvedDoubts, :doubtsEscalated=>doubtsEscalated)
+    end
+
+    render json:{totalDoubts: totalDoubts, totalDoubtsResolved: totalDoubtsResolved, totalEscalated: totalEscalated, avgResolutionTime: avgResolutionTime, teachers: teachers}, status: :ok
+  end
 end
