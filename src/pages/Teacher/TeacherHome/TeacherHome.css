@@ -2,3 +2,43 @@
   display: flex;
   flex-direction: row;
 }
+
+.Dashboard-Box {
+  position: unset;
+  transform: unset;
+  width: 150px;
+  height: 100px;
+  text-align: center;
+  justify-content: space-around;
+}
+
+.DoubtCard.TeacherDoubtCard > button {
+  color: var(--purple);
+  background-color: white;
+  border: 1px solid var(--purple);
+  padding: 5px 20px;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+.TA-Report {
+  position: unset;
+  transform: unset;
+  margin: 20px auto;
+  width: 80vw;
+  text-align: left;
+}
+
+.TA-Report > div {
+  width: 100%;
+}
+
+.Report-Card {
+  background-color: white;
+  margin: 10px auto;
+  padding: 10px 20px;
+}
+
+.Report-Card > div:first-child {
+  font-weight: 600;
+}

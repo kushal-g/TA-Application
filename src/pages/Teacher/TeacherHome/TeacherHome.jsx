@@ -4,6 +4,7 @@ import Box from "../../../components/Box/Box";
 import "./TeacherHome.css";
 import getTeacherId from "../../../utils/getTeacherId";
 import { Link } from "react-router-dom";
+import formatSeconds from "../../../utils/formatSeconds";
 
 export default function TeacherHome() {
   const [currentTab, setCurrentTab] = useState("Home");
@@ -103,7 +104,13 @@ function Solving() {
           {doubts.map((doubt) => (
             <Box key={doubt.id} className="DoubtCard TeacherDoubtCard">
               <div className="title">{doubt.title}</div>
-              <Link to={`/teacher/solve/${doubt.id}`}>Solve</Link>
+              <button
+                onClick={() =>
+                  (window.location.href = `/teacher/solve/${doubt.id}`)
+                }
+              >
+                Solve
+              </button>
             </Box>
           ))}
         </div>
@@ -113,10 +120,78 @@ function Solving() {
 }
 
 function Dashboard() {
+  const [stats, setStats] = useState(false);
+
+  const fetchStats = async () => {
+    const response = await fetch(`${process.env.REACT_APP_URL}/teacher/stats`);
+    const body = await response.json();
+    console.log(body);
+    setStats(body);
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div>
         <h1 style={{ marginLeft: "20px" }}>Dashboard</h1>
+        {stats && (
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+              <Box className="Dashboard-Box">
+                <div>{stats.totalDoubts}</div>
+                <div>Doubts Asked</div>
+              </Box>
+              <Box className="Dashboard-Box">
+                <div>{stats.totalDoubtsResolved}</div>
+                <div>Doubts Resolved</div>
+              </Box>
+              <Box className="Dashboard-Box">
+                <div>{stats.totalEscalated}</div>
+                <div>Doubts Escalated</div>
+              </Box>
+
+              <Box className="Dashboard-Box">
+                <div>{formatSeconds(stats.avgResolutionTime)}</div>
+                <div>Avg. Doubt Resolution Time</div>
+              </Box>
+            </div>
+            <div>
+              <Box className="TA-Report">
+                <div>TAs Report</div>
+                <div>
+                  {stats.teachers.map((teacher) => (
+                    <div key={teacher.id} className="Report-Card">
+                      <div>{teacher.name}</div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>Doubts Accepted: {teacher.doubtsAccepted} </div>
+
+                        <div>
+                          Doubts Resolved: {teacher.resolvedDoubts.numResolved}
+                        </div>
+                        <div>Doubts Escalated : {teacher.doubtsEscalated}</div>
+                        <div>
+                          Avg Doubt Resolution Time:{" "}
+                          {formatSeconds(
+                            teacher.resolvedDoubts.totalTime /
+                              teacher.resolvedDoubts.numResolved
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Box>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
